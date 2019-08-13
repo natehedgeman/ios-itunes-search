@@ -18,10 +18,8 @@ class SearchResultController {
     func performSearch (searchTerm: String, resultType: ResultType, completion: @escaping (Error?) -> Void) {
         
         var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true)
-        
         let queryItem = URLQueryItem(name: "term", value: searchTerm)
         let queryItemType = URLQueryItem(name: "entity", value: resultType.rawValue)
-        
         urlComponents?.queryItems = [queryItem, queryItemType]
         
         guard let request = urlComponents?.url else {
@@ -29,11 +27,9 @@ class SearchResultController {
             completion(NSError())
             return
         }
-        
         let requestURL = URLRequest(url: request)
         
         URLSession.shared.dataTask(with: requestURL) { (data, _, error) in
-            
             if let error = error {
                 NSLog("Error fetching data \(error)")
                 completion(error)
@@ -47,22 +43,15 @@ class SearchResultController {
             }
             
             do {
-                
                 let jsonDecoder = JSONDecoder()
-                
                 let searchResultData = try jsonDecoder.decode(BaseResults.self, from: data)
-                
                 self.searchResults = searchResultData.results
-                
+
                 completion(nil)
-            
-                
             } catch {
-                
                 NSLog("Error decoding data: \(error)")
                 completion(error)
             }
-            
         }.resume()
     }
 }
